@@ -1,5 +1,7 @@
 import numpy as np
 import pandas as pd
+import matplotlib.pyplot as pyplot
+import numpy as np
 
 
 class Perceptron(object):
@@ -46,5 +48,21 @@ class Perceptron(object):
     def predict(self, x):
         return np.where(self.net_input(x) >= 0.0, 1, -1)
 
+def print_raw_data(pandas_data):
+    print(pandas_data.head())
+
+def plot_raw_training_data(pandas_data):
+    # grab first 100 records, and grab 0 and 2nd indexed values
+    x = pandas_data.iloc[0:100, [0,2]].values
+    # first 50 are setosa, next 50 are versicolor in the training data set
+    pyplot.scatter(x[:50, 0], x[:50, 1], color='red', marker='o', label='setosa')
+    pyplot.scatter(x[50:100, 0], x[50:100, 1], color='blue', marker='x', label='versicolor')
+    pyplot.xlabel('sepal length')
+    pyplot.ylabel('petal length')
+    pyplot.legend(loc='upper left')
+    pyplot.show()
+
+
 df = pd.read_csv("https://archive.ics.uci.edu/ml/machine-learning-databases/iris/iris.data", header=None)
-print(df.tail())
+print_raw_data(df)
+plot_raw_training_data(df)
