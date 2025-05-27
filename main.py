@@ -40,7 +40,7 @@ class Perceptron(object):
                 self._weights[0] += update
                 errors += int(update != 0.0)
             self._errors.append(errors)
-        return self
+        return self._errors
 
     def net_input(self, x):
         return np.dot(x, self._weights[1:]) + self._weights[0]
@@ -66,3 +66,18 @@ def plot_raw_training_data(pandas_data):
 df = pd.read_csv("https://archive.ics.uci.edu/ml/machine-learning-databases/iris/iris.data", header=None)
 print_raw_data(df)
 plot_raw_training_data(df)
+
+
+# all training set values
+training_names = df.iloc[0:100, 4].values
+training_values = df.iloc[0:100, [0, 2]].values
+# construct an array of classifiers, set to -1 where setosa, 1 if versicolor
+training_classifiers = np.where(training_names == "Iris-setosa", -1, 1)
+
+
+perceptron = Perceptron(eta=0.1, n_iter=10)
+plot_errors = perceptron.fit(training_values, training_classifiers)
+pyplot.plot(range(1, len(plot_errors) + 1), plot_errors, marker='o')
+pyplot.xlabel('Epochs')
+pyplot.ylabel('# miss-classifications')
+pyplot.show()
