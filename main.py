@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as pyplot
-import numpy as np
+from matplotlib.colors import ListedColormap
 
 
 class Perceptron(object):
@@ -62,6 +62,27 @@ def plot_raw_training_data(pandas_data):
     pyplot.legend(loc='upper left')
     pyplot.show()
 
+def plot_decision_regions(training, target, classifier, resolution=0.02):
+    # set up symbology
+    markers = ('s', 'x', 'o', '^', 'v')
+    colors = ('red', 'blue', 'lightgreen', 'gray', 'cyan')
+    cmap = ListedColormap(colors[:len(np.unique(target))])
+
+    # plot the decision surface
+    x1_min, x1_max = training[:, 0].min() - 1, training[:, 0].max() + 1
+    x2_min, x2_max = training[:, 1].min() - 1, training[:, 1].max() + 1
+    xx1, xx2 = np.meshgrid(np.arange(x1_min, x1_max, resolution), np.arange(x2_min, x2_max, resolution))
+    z = classifier.predict(np.array([xx1.ravel(), xx2.ravel()]).T)
+    z = z.reshape(xx1.shape)
+    pyplot.contourf(xx1, xx2, z, alpha=0.4, cmap=cmap)
+    pyplot.xlim(xx1.min(), xx1.max())
+    pyplot.ylim(xx2.min(), xx2.max())
+
+    # plot class samples
+    for i, cl in enumerate( np.unique(target)):
+        pyplot.scatter(x=training[target == cl, 0], y=training[target == cl, 1], alpha=0.8, c=cmap(i), marker=markers[i], label=cl)
+
+
 
 df = pd.read_csv("https://archive.ics.uci.edu/ml/machine-learning-databases/iris/iris.data", header=None)
 print_raw_data(df)
@@ -80,4 +101,10 @@ plot_errors = perceptron.fit(training_values, training_classifiers)
 pyplot.plot(range(1, len(plot_errors) + 1), plot_errors, marker='o')
 pyplot.xlabel('Epochs')
 pyplot.ylabel('# miss-classifications')
+pyplot.show()
+
+plot_decision_regions(training_values, training_classifiers, classifier=perceptron)
+pyplot.xlabel('sepal length [cm]')
+pyplot.ylabel('petal length [cm')
+pyplot.legend(loc='upper left')
 pyplot.show()
